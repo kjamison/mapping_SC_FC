@@ -29,6 +29,10 @@ save_files='directory/training_output.mat'
 initializer = tf2.initializers.GlorotUniform()
 
 
+#load data
+input_data = scipy.io.loadmat(data_path)['sc']
+output_data = scipy.io.loadmat(data_path)['fc']
+
 with tf.device('//device:GPU:0'):
     ################ Build Network############################
     # Network Inputs
@@ -71,10 +75,6 @@ with tf.Session(config=tf.ConfigProto(allow_soft_placement=True, log_device_plac
         #for averaging the results over  entire dataset for each epoch
         loss_temp = 0
         ci = 0
-
-        #load data
-        input_data = scipy.io.loadmat(data_path)['sc']
-        output_data = scipy.io.loadmat(data_path)['fc']
 
         # Train
         for iters in range(0, np.shape(input_data)[0], batch_size):
