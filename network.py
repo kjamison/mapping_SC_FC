@@ -1,6 +1,8 @@
-import tensorflow as tf
+import tensorflow as tf2
+import tensorflow.compat.v1 as tf
 import numpy as np
-from scipy.stats import pearsonr
+
+tf.disable_v2_behavior()
 
 # Network Parameters
 # Number of connections at input and output
@@ -8,8 +10,8 @@ conn_dim = 2278 #(upper-triangle of Connectiivty matrix)
 layer_dim = 1024
 
 
-#Xavier initializer
-initializer = tf.contrib.layers.xavier_initializer()
+#Xavier initializer (GlorotUniform is tf2 equivalent)
+initializer = tf2.initializers.GlorotUniform()
 EPS = 1e-12
 
 # Store layers weight & bias
@@ -121,9 +123,17 @@ def compute_corr(sample):
     count = 0
     for i in range(np.shape(sample)[0]):
         start = sample[i, :]
+        start = start - start.mean(keepdims=True)
+        start = start/np.sqrt(np.sum(start**2,keepdims=True))
         for j in range(np.shape(sample)[0]):
             if (j!=i):
                 count +=1
-                corr, corr1 = pearsonr(np.transpose(start), np.transpose(sample[j, :]))
+                #corr, corr1 = pearsonr(np.transpose(start), np.transpose(sample[j, :]))
+                #scipy.stats.pearsonr has version or compatibility issues on tf2 GPU
+                #so just compute it ourselves
+                cur=sample[j,:]
+                cur=cur-cur.mean(keepdims=True)
+                cur=cur/np.sqrt(np.sum(cur**2,keepdims=True))
+                corr = start@cur.T
                 sp_corr += corr
     return sp_corr/count

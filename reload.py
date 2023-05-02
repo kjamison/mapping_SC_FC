@@ -2,8 +2,13 @@ from __future__ import division, print_function, absolute_import
 
 from network import *
 import numpy as np
-import tensorflow as tf
-import scipy.stats
+import tensorflow as tf2
+import tensorflow.compat.v1 as tf
+import scipy.io
+
+tf.disable_v2_behavior()
+
+
 
 # Number of connections at input and output
 conn_dim = 2278 #(upper-triangle of Connectiivty matrix)
@@ -13,8 +18,8 @@ meta_file=model_path + '.meta'
 save_path='Specify path to save predicted FCs' #path for saving results
 batch_size = 1
 
-#Xavier initializer
-initializer = tf.contrib.layers.xavier_initializer()
+#Xavier initializer (GlorotUniform is tf2 equivalent)
+initializer = tf2.initializers.GlorotUniform()
 
 
 with tf.device('//device:GPU:0'):

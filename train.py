@@ -2,9 +2,11 @@ from __future__ import division, print_function, absolute_import
 
 from network import *
 import numpy as np
-import tensorflow as tf
-import scipy.stats
+import tensorflow as tf2
+import tensorflow.compat.v1 as tf
+import scipy.io
 
+tf.disable_v2_behavior()
 
 # Training Parameters
 epochs = 20000
@@ -23,8 +25,8 @@ data_path='example_data.mat'
 save_dir='directory/model.ckpt'
 save_files='directory/training_output.mat'
 
-#Xavier initializer
-initializer = tf.contrib.layers.xavier_initializer()
+#Xavier initializer (GlorotUniform is tf2 equivalent)
+initializer = tf2.initializers.GlorotUniform()
 
 
 with tf.device('//device:GPU:0'):
