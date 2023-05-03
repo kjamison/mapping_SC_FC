@@ -10,12 +10,14 @@ tf.disable_v2_behavior()
 
 # Training Parameters
 epochs = 20000
-nepoch=10
+nepoch=500 #save checkpoint every 500 epochs (~130MB/checkpoint * 40 checkpoints = 5GB)
 batch_size = 10
 learning_rate = 1e-5
 drop_out=0.5
 reg_param=0.4
 reg_constant=0.001
+
+maxcheckpoints=None #keep all checkpoints
 
 # Number of connections at input and output
 conn_dim = 2278 #(upper-triangle of Connectiivty matrix)
@@ -57,7 +59,7 @@ with tf.device('//device:GPU:0'):
     # Initialize the variables (i.e. assign their default value)
     init = tf.global_variables_initializer()
     init_l = tf.local_variables_initializer()
-    saver = tf.train.Saver()
+    saver = tf.train.Saver(max_to_keep=maxcheckpoints)
 
 # Create session for training
 with tf.Session(config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
